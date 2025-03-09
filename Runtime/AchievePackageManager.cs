@@ -1,4 +1,0 @@
-﻿namespace Achieve.Package.Manager
-{
-    
-}
