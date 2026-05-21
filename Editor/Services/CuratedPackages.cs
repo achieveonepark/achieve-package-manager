@@ -34,16 +34,7 @@ namespace Achieve.Package.Manager
                 Repository = "https://github.com/GlitchEnzo/NuGetForUnity",
                 Category = "Tools",
             },
-            new CuratedPackage
-            {
-                Id = "com.neuecc.unirx",
-                DisplayName = "UniRx",
-                Description = "Reactive Extensions for Unity.",
-                GitUrl = "https://github.com/neuecc/UniRx.git?path=Assets/Plugins/UniRx/Scripts",
-                Repository = "https://github.com/neuecc/UniRx",
-                Category = "Async",
-            },
-            new CuratedPackage
+new CuratedPackage
             {
                 Id = "com.cysharp.zstring",
                 DisplayName = "ZString",
