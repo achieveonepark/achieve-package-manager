@@ -104,6 +104,10 @@ namespace Achieve.Package.Manager
                 if (prop.Name == "_updated") continue;
                 if (!(prop.Value is JObject obj)) continue;
 
+                // OpenUPM's /-/all is an npm-format index and can include npm-scoped
+                // names (@scope/name) that are not valid UPM package names. Skip them.
+                if (!PackageCenter.IsValidPackageName(prop.Name)) continue;
+
                 list.Add(BuildInfo(prop.Name, obj));
             }
 

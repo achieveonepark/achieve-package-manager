@@ -277,30 +277,134 @@ namespace Achieve.Package.Manager
             _contentRoot.Add(SectionTitle("Installed Packages",
                 "Packages currently listed in Packages/manifest.json (plus built-in dependencies)."));
 
-            var packages = (PackageCenter.InstalledPackages ?? new List<PackageInfo>())
+            var resolved = (PackageCenter.InstalledPackages ?? new List<PackageInfo>())
                 .Where(p => string.IsNullOrEmpty(_search)
                     || (p.displayName ?? string.Empty).IndexOf(_search, StringComparison.OrdinalIgnoreCase) >= 0
                     || (p.name ?? string.Empty).IndexOf(_search, StringComparison.OrdinalIgnoreCase) >= 0)
                 .OrderBy(p => p.displayName ?? p.name, StringComparer.OrdinalIgnoreCase)
                 .ToList();
 
+            var resolvedNames = new HashSet<string>(
+                (PackageCenter.InstalledPackages ?? new List<PackageInfo>()).Select(p => p.name));
+
+            // Manifest entries that did not resolve (typos, invalid names, unreachable Git
+            // repos). Surfacing them here makes a broken manifest recoverable from the tool.
+            var manifestDeps = PackageCenter.Manifest?.Dependencies ?? new Dictionary<string, string>();
+            var unresolved = manifestDeps
+                .Where(kv => !resolvedNames.Contains(kv.Key))
+                .Where(kv => string.IsNullOrEmpty(_search)
+                    || kv.Key.IndexOf(_search, StringComparison.OrdinalIgnoreCase) >= 0)
+                .OrderBy(kv => kv.Key, StringComparer.OrdinalIgnoreCase)
+                .ToList();
+
             var list = ScrollPanel();
             _contentRoot.Add(list);
 
-            if (packages.Count == 0)
+            if (resolved.Count == 0 && unresolved.Count == 0)
             {
                 list.Add(EmptyState("No installed packages match the current filter."));
                 return;
             }
 
-            list.Add(InstalledHeaderRow());
-
-            var alt = false;
-            foreach (var pkg in packages)
+            if (unresolved.Count > 0)
             {
-                list.Add(InstalledRow(pkg, alt));
-                alt = !alt;
+                list.Add(WarningBanner(
+                    $"{unresolved.Count} manifest entr{(unresolved.Count == 1 ? "y" : "ies")} did not resolve. " +
+                    "An invalid entry blocks ALL package resolution - remove it to recover."));
+
+                list.Add(InstalledHeaderRow());
+                var altU = false;
+                foreach (var kv in unresolved)
+                {
+                    list.Add(UnresolvedRow(kv.Key, kv.Value, altU));
+                    altU = !altU;
+                }
+                list.Add(new VisualElement { style = { height = 12 } });
             }
+
+            if (resolved.Count > 0)
+            {
+                list.Add(InstalledHeaderRow());
+                var alt = false;
+                foreach (var pkg in resolved)
+                {
+                    list.Add(InstalledRow(pkg, alt));
+                    alt = !alt;
+                }
+            }
+        }
+
+        private VisualElement WarningBanner(string text)
+        {
+            var banner = new VisualElement();
+            banner.style.flexDirection = FlexDirection.Row;
+            banner.style.alignItems = Align.Center;
+            banner.style.paddingLeft = 10;
+            banner.style.paddingRight = 10;
+            banner.style.paddingTop = 6;
+            banner.style.paddingBottom = 6;
+            banner.style.marginBottom = 8;
+            banner.style.backgroundColor = new Color(0.36f, 0.26f, 0.10f);
+            banner.style.borderLeftWidth = 3;
+            banner.style.borderLeftColor = new Color(0.92f, 0.66f, 0.22f);
+            banner.style.borderTopLeftRadius = banner.style.borderTopRightRadius =
+                banner.style.borderBottomLeftRadius = banner.style.borderBottomRightRadius = 3;
+
+            var l = new Label(text);
+            l.style.color = new Color(0.95f, 0.85f, 0.6f);
+            l.style.fontSize = 11;
+            l.style.whiteSpace = WhiteSpace.Normal;
+            l.style.flexGrow = 1;
+            banner.Add(l);
+            return banner;
+        }
+
+        private VisualElement UnresolvedRow(string packageName, string versionOrUrl, bool alt)
+        {
+            var row = new VisualElement();
+            row.style.flexDirection = FlexDirection.Row;
+            row.style.alignItems = Align.Center;
+            row.style.paddingLeft = 12;
+            row.style.paddingRight = 12;
+            row.style.height = 34;
+            row.style.backgroundColor = alt ? BgRowAlt : BgRow;
+            row.RegisterCallback<MouseEnterEvent>(_ => row.style.backgroundColor = BgRowHover);
+            row.RegisterCallback<MouseLeaveEvent>(_ => row.style.backgroundColor = alt ? BgRowAlt : BgRow);
+
+            var nameCol = new VisualElement();
+            nameCol.style.flexGrow = 2;
+
+            var display = new Label(packageName);
+            display.style.color = TextPrimary;
+            display.style.unityFontStyleAndWeight = FontStyle.Bold;
+            display.style.fontSize = 12;
+            nameCol.Add(display);
+
+            var sub = new Label(PackageCenter.IsValidPackageName(packageName)
+                ? "Unresolved (not downloaded)"
+                : "Invalid package name");
+            sub.style.color = new Color(0.92f, 0.66f, 0.22f);
+            sub.style.fontSize = 10;
+            nameCol.Add(sub);
+            row.Add(nameCol);
+
+            row.Add(BodyCell(Truncate(versionOrUrl, 40), width: 140, muted: true));
+            row.Add(BodyCell("Unresolved", width: 110, muted: true));
+
+            var action = new VisualElement();
+            action.style.width = 110;
+            action.style.flexDirection = FlexDirection.Row;
+            action.style.justifyContent = Justify.FlexEnd;
+            action.Add(DangerButton("Remove", () =>
+            {
+                if (!EditorUtility.DisplayDialog("Remove package",
+                    $"Remove '{packageName}' from manifest.json?", "Remove", "Cancel")) return;
+                if (PackageCenter.RemoveDependency(packageName))
+                    ShowNotification(new GUIContent($"Removed {packageName}"));
+            }));
+            row.Add(action);
+
+            return row;
         }
 
         private VisualElement InstalledHeaderRow()

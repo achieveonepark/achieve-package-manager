@@ -95,10 +95,38 @@ namespace Achieve.Package.Manager
             InstalledPackagesRefreshed?.Invoke();
         }
 
+        // UPM package names must be lowercase reverse-DNS (e.g. com.company.tool).
+        // Writing anything else into manifest.json breaks ALL package resolution.
+        internal static bool IsValidPackageName(string name)
+        {
+            if (string.IsNullOrWhiteSpace(name)) return false;
+            if (name.Length > 214) return false;
+
+            var first = name[0];
+            if (!((first >= 'a' && first <= 'z') || (first >= '0' && first <= '9')))
+                return false;
+
+            foreach (var c in name)
+            {
+                var ok = (c >= 'a' && c <= 'z') || (c >= '0' && c <= '9')
+                         || c == '-' || c == '_' || c == '.';
+                if (!ok) return false;
+            }
+            return true;
+        }
+
         internal static AddManifestResult AddDependency(string packageName, string versionOrUrl)
         {
             if (string.IsNullOrWhiteSpace(packageName) || string.IsNullOrWhiteSpace(versionOrUrl))
                 return AddManifestResult.Fail;
+
+            packageName = packageName.Trim();
+            if (!IsValidPackageName(packageName))
+            {
+                Debug.LogError($"[AchievePM] Invalid UPM package name '{packageName}'. " +
+                               "Names must be lowercase reverse-DNS (e.g. com.company.tool).");
+                return AddManifestResult.Fail;
+            }
 
             LoadManifest();
             var result = Manifest.AddDependency(packageName, versionOrUrl);
@@ -126,6 +154,14 @@ namespace Achieve.Package.Manager
         {
             if (string.IsNullOrWhiteSpace(packageName) || string.IsNullOrWhiteSpace(version))
                 return AddManifestResult.Fail;
+
+            packageName = packageName.Trim();
+            if (!IsValidPackageName(packageName))
+            {
+                Debug.LogError($"[AchievePM] Invalid UPM package name '{packageName}'. " +
+                               "Names must be lowercase reverse-DNS (e.g. com.company.tool).");
+                return AddManifestResult.Fail;
+            }
 
             LoadManifest();
             Manifest.RegisterOpenUpmScope(packageName);
