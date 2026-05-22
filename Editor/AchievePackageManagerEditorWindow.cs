@@ -82,12 +82,17 @@ namespace Achieve.Package.Manager
             var body = new VisualElement();
             body.style.flexDirection = FlexDirection.Row;
             body.style.flexGrow = 1;
+            body.style.flexShrink = 1;
+            body.style.minHeight = 0;
             root.Add(body);
 
             body.Add(BuildSidebar());
 
             _contentRoot = new VisualElement();
             _contentRoot.style.flexGrow = 1;
+            _contentRoot.style.flexShrink = 1;
+            _contentRoot.style.minHeight = 0;
+            _contentRoot.style.overflow = Overflow.Hidden;
             _contentRoot.style.backgroundColor = BgPanel;
             _contentRoot.style.paddingLeft = 12;
             _contentRoot.style.paddingRight = 12;
@@ -105,7 +110,9 @@ namespace Achieve.Package.Manager
             var bar = new VisualElement();
             bar.style.flexDirection = FlexDirection.Row;
             bar.style.alignItems = Align.Center;
-            bar.style.height = 34;
+            bar.style.height = 38;
+            bar.style.minHeight = 38;
+            bar.style.flexShrink = 0;
             bar.style.paddingLeft = 10;
             bar.style.paddingRight = 10;
             bar.style.backgroundColor = BgSidebar;
@@ -152,6 +159,8 @@ namespace Achieve.Package.Manager
         {
             var side = new VisualElement();
             side.style.width = 200;
+            side.style.minWidth = 200;
+            side.style.flexShrink = 0;
             side.style.backgroundColor = BgSidebar;
             side.style.borderRightWidth = 1;
             side.style.borderRightColor = BorderColor;
@@ -171,6 +180,8 @@ namespace Achieve.Package.Manager
         {
             var bar = new VisualElement();
             bar.style.height = 22;
+            bar.style.minHeight = 22;
+            bar.style.flexShrink = 0;
             bar.style.flexDirection = FlexDirection.Row;
             bar.style.alignItems = Align.Center;
             bar.style.paddingLeft = 10;
