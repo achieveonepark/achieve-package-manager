@@ -17,7 +17,7 @@
     "com.unity.nuget.newtonsoft-json": "3.2.1",
     "com.unity.serialization": "3.1.1"
   },
-  "documentationUrl": "https://github.com/achieveonepark/achieve-package-manager",
+  "documentationUrl": "https://somiri.dev/achieve-package-manager/",
   "changelogUrl": "https://github.com/achieveonepark/achieve-package-manager/blob/main/CHANGELOG.md",
   "_upm": {
     "changelog": "## Added\n- UI Toolkit-based package manager window\n- OpenUPM registry integration with one-click install\n- Curated GitHub utilities (UniTask, NuGetForUnity, VContainer, ...)\n- Custom Git URL installer\n- Installed package list with source detection"
