@@ -1,0 +1,36 @@
+# Featured 탭
+
+자주 쓰이는 무료/오픈소스 Git 패키지를 카테고리별 카드로 정리해 두었습니다. 카드의 `Install` 버튼이면 끝.
+
+## 현재 큐레이션 목록
+
+| 카테고리 | 패키지 |
+|----------|--------|
+| Async | UniTask, R3 |
+| Animation | DOTween, PrimeTween |
+| Performance | ZString |
+| Messaging | MessagePipe |
+| Serialization | Newtonsoft Json, MemoryPack, OdinSerializer |
+| Logging | ZLogger |
+| Dependency Injection | VContainer, Extenject (Zenject) |
+| Networking | Mirror |
+| UI | UI Effect, Soft Mask, Particle Effect for uGUI, Unmask for uGUI |
+| Editor | NaughtyAttributes, xNode |
+| Tools | NuGet for Unity |
+| Debug | In-Game Debug Console, Graphy, Asset Usage Detector, Runtime Inspector |
+
+## 카드 한 장의 의미
+
+각 카드에는 다음이 들어있습니다.
+
+* **표시 이름** (예: `UniTask`)
+* **패키지 ID** (manifest에 들어갈 키, 예: `com.cysharp.unitask`)
+* **설명** 한 줄
+* **Install / Reinstall** 버튼
+* **GitHub** 버튼 — 저장소 페이지로 이동
+
+`Install` 버튼은 카드에 정의된 `GitUrl`을 매니페스트 dependency 값으로 그대로 작성합니다. 대부분은 `https://github.com/...git?path=...` 형식이지만, Newtonsoft Json처럼 OpenUPM 표준 패키지인 경우엔 버전 번호(`3.2.1`)가 값으로 들어가요.
+
+## 추가/수정하고 싶다면
+
+`Editor/Services/CuratedPackages.cs`의 정적 리스트에 항목을 추가하세요. 자세한 절차는 [큐레이션 목록 확장](../reference/extending-curated-list.md) 참고.

@@ -1,0 +1,16 @@
+{
+  "title": "Achieve Package Manager",
+  "description": "Unity UI Toolkit 기반 패키지 매니저 가이드",
+  "author": "Achieveone",
+  "language": "ko",
+  "links": {
+    "sidebar": {
+      "GitHub": "https://github.com/achieveonepark/achieve-package-manager"
+    }
+  },
+  "pluginsConfig": {
+    "theme-default": {
+      "showLevel": true
+    }
+  }
+}

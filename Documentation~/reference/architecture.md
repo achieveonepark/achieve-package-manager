@@ -1,0 +1,75 @@
+# 아키텍처
+
+## 폴더 구조
+
+```
+Editor/
+├── AchievePackageManagerEditorWindow.cs   # UI Toolkit 윈도우
+├── Dto/
+│   ├── PackageCenter.cs                   # 매니페스트 읽기/쓰기 + 패키지 리스트
+│   └── OpenUpmPackageInfo.cs              # OpenUPM 패키지 DTO
+└── Services/
+    ├── OpenUpmService.cs                  # OpenUPM API 클라이언트
+    └── CuratedPackages.cs                 # 큐레이션된 Git 패키지 리스트
+```
+
+## 핵심 컴포넌트
+
+### `PackageCenter` (정적, `[InitializeOnLoad]`)
+
+* `manifest.json` 읽기/쓰기의 단일 진입점
+* `Client.List(true)` 비동기 호출로 `InstalledPackages` 캐시
+* 외부에서 구독 가능한 `InstalledPackagesRefreshed` 이벤트
+* 모든 쓰기 작업 후 `AssetDatabase.Refresh()` + `Client.Resolve()` + 리스트 재조회
+* `IsValidPackageName` — UPM 패키지 이름 규칙 검증
+* `ManifestData.ToJson()` — 알지 못하는 최상위 필드를 보존하면서 직렬화 (lockFile 등 손상 방지)
+
+### `OpenUpmService` (정적)
+
+* `https://package.openupm.com/-/all` 호출 (한 번에 전체 카탈로그)
+* 결과는 메모리 캐시 (`_cache`) — 세션당 1회만 요청
+* `forceRefresh` 옵션으로 강제 재요청
+* `ParseAll`에서 `PackageCenter.IsValidPackageName`으로 npm-스코프 이름 사전 필터
+* `FetchPackageDetail` — 패키지 개별 상세 조회 API (현재 UI에서 미사용, 확장용으로 남겨둠)
+
+### `CuratedPackages` (정적 리스트)
+
+* 컴파일타임 리스트 — 외부 호출 없음
+* 각 항목: `Id`, `DisplayName`, `Description`, `GitUrl`, `Repository`, `Category`
+* Featured 탭은 이 리스트를 `Category`로 그룹화해서 카드 그리드 렌더
+
+### `AchievePackageManagerEditorWindow`
+
+* `EditorWindow` + UI Toolkit (rootVisualElement)
+* 단일 윈도우, 탭별로 컨텐츠 영역을 `Clear()` 후 재구축
+* 스타일은 인라인 (`IStyle`) — USS 파일 없이 자체 완결
+
+## 데이터 흐름 (OpenUPM 설치 예)
+
+```
+UI 클릭 (Install)
+    ↓
+window.InstallOpenUpm(pkg)
+    ↓
+PackageCenter.AddOpenUpmPackage(name, version)
+    ↓
+1) IsValidPackageName 검증
+2) LoadManifest()
+3) Manifest.RegisterOpenUpmScope(name)   ← 스코프 자동 추가
+4) Manifest.AddDependency(name, version)
+5) SaveManifest()                        ← manifest.json 디스크 저장
+6) ResolveAndRefresh()
+    ├ AssetDatabase.Refresh()
+    ├ Client.Resolve()                   ← Unity가 새 패키지 다운로드
+    └ Refresh() → Client.List(true)      ← UI에 반영
+```
+
+## 외부 API 호출
+
+| 호출 | 빈도 | 비고 |
+|------|------|------|
+| `https://package.openupm.com/-/all` | OpenUPM 탭 첫 진입 + Refresh | 메모리 캐시, 세션당 1회 |
+| GitHub API | **없음** | Git 설치는 manifest 편집 → Unity가 `git clone` |
+| `Client.List` / `Client.Resolve` | 매 새로고침 / 매 쓰기 작업 | 로컬 동작 |
+
+리밋 걸릴 일은 없는 수준입니다.
