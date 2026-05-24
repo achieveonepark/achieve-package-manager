@@ -7,7 +7,7 @@ A clean UI Toolkit-based package manager for Unity. Install OpenUPM packages, cu
 ![Unity](https://img.shields.io/badge/Unity-2022.3%2B-black?logo=unity)
 ![License](https://img.shields.io/badge/license-MIT-blue)
 
-📖 **Documentation**: [https://somiri.dev/achieve-package-manager/](https://somiri.dev/achieve-package-manager/)
+📖 **Documentation**: [https://somiri.dev/achieve-package-manager/en/](https://somiri.dev/achieve-package-manager/en/)
 
 ## Features
 

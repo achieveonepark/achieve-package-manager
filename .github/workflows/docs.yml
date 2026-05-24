@@ -22,22 +22,26 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - uses: actions/setup-node@v4
         with:
           node-version: '20'
 
-      - name: Install Honkit
-        run: npm install --global honkit
+      - name: Install dependencies
+        working-directory: 'Documentation~'
+        run: npm install --no-audit --no-fund
 
-      - name: Build documentation
-        run: honkit build "Documentation~" _site
+      - name: Build VitePress site
+        working-directory: 'Documentation~'
+        run: npx vitepress build
 
       - uses: actions/configure-pages@v5
 
       - uses: actions/upload-pages-artifact@v3
         with:
-          path: _site
+          path: 'Documentation~/.vitepress/dist'
 
   deploy:
     needs: build
