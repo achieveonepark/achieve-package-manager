@@ -1,0 +1,48 @@
+# Extending the Curated List
+
+To add or modify entries in the Featured tab, edit `Editor/Services/CuratedPackages.cs`.
+
+## Data model
+
+```csharp
+internal class CuratedPackage
+{
+    public string Id;          // manifest dependency key (e.g. com.cysharp.unitask)
+    public string DisplayName; // shown large on the card
+    public string Description; // one-line description
+    public string GitUrl;      // manifest dependency value - Git URL or version string
+    public string Repository;  // URL opened by the "GitHub" button
+    public string Category;    // grouping key for the card grid
+}
+```
+
+## Example: adding an entry
+
+```csharp
+new CuratedPackage
+{
+    Id = "com.example.awesome",
+    DisplayName = "Awesome Library",
+    Description = "Does awesome things for Unity.",
+    GitUrl = "https://github.com/example/awesome.git?path=Packages/com.example.awesome",
+    Repository = "https://github.com/example/awesome",
+    Category = "Tools",
+},
+```
+
+Append this block to `CuratedPackages.All` (or next to its category siblings) and it appears in the Featured tab immediately.
+
+## Recommendations
+
+* **Make `Id` match the package's real `package.json` name.** This is what lets Unity detect duplicate installs and "already installed" state correctly.
+* Many repos aren't UPM-ready at the root, so use `?path=...` in `GitUrl` to point at the package subfolder. Check the target repo's README.
+* To pin a version, use the `?path=...#v1.2.3` format.
+* For packages officially hosted on OpenUPM, `GitUrl` can be a plain **version string** (e.g. `"3.2.1"`). The user must already have the OpenUPM scoped registry configured, so the Git URL form is more self-contained.
+* `Category` is a free-form string, but reusing the same names produces cleaner grouping.
+
+## Display order
+
+* Categories are grouped alphabetically.
+* Cards within a category are sorted by `DisplayName` alphabetically.
+
+If you need a specific category order, prefixing with `"01 - Async"` works but is not recommended.

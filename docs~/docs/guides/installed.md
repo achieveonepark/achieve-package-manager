@@ -1,0 +1,41 @@
+# Installed 탭
+
+`Packages/manifest.json`을 기반으로 현재 프로젝트에 들어있는 패키지를 보여줍니다.
+
+## 표시 항목
+
+| 컬럼 | 설명 |
+|------|------|
+| Package | 표시 이름 + 패키지 ID(예: `com.cysharp.unitask`) |
+| Version | 설치된 버전 |
+| Source | 자동 감지된 소스 — `Registry` / `Git` / `Local` / `Embedded` / `Built-in` |
+| (액션) | `Remove` 버튼 (제거 가능한 경우) |
+
+## 소스 감지 규칙
+
+* `packageId`가 `https://`, `git@`, `.git`을 포함 → **Git**
+* `packageId`가 `file:`로 시작 → **Local**
+* `PackageSource.BuiltIn` 또는 `com.unity.modules.*` → **Built-in** (Remove 비활성)
+* 그 외 → Unity가 보고한 `PackageSource` 값 그대로
+
+## 제거 동작
+
+`Remove` 버튼은:
+1. 확인 다이얼로그 표시
+2. `manifest.json`의 `dependencies`에서 해당 항목 삭제
+3. `Client.Resolve()`로 즉시 재해석
+
+> **빌트인 모듈(`com.unity.modules.*`)과 이 패키지 자신은 안전상 제거할 수 없습니다.**
+
+## 미해결(Unresolved) 항목
+
+`manifest.json`에는 있지만 Unity가 해석하지 못한 항목(잘못된 이름, 끊긴 Git 저장소, 네트워크 실패 등)은 상단에 **노란색 경고 배너**와 함께 따로 표시됩니다.
+
+```
+⚠ 1 manifest entry did not resolve. An invalid entry blocks ALL package
+   resolution - remove it to recover.
+```
+
+각 미해결 항목에도 `Remove` 버튼이 붙으므로, **도구를 통해 깨진 매니페스트를 복구**할 수 있습니다.
+
+> 단, 매니페스트가 너무 망가져 패키지 매니저 자체가 로드되지 않는 경우엔 `Packages/manifest.json`을 직접 편집해서 깨진 항목을 지워주세요. 자세한 내용은 [문제 해결](troubleshooting.md) 참조.
