@@ -1,0 +1,45 @@
+---
+title: "OpenUPM Tab"
+---
+
+Browse the entire [OpenUPM](https://openupm.com/) registry and install with one click.
+
+## Data source
+
+```
+GET https://package.openupm.com/-/all
+```
+
+OpenUPM is an npm-compatible registry (Verdaccio-based). The endpoint above returns every package OpenUPM indexes, in a single response.
+
+> The response is a few MB. The tool caches the result in memory, so it is only downloaded **once per editor session**. The toolbar `↻ Refresh` button is the only way to force a re-fetch.
+
+## Search
+
+The search field filters on three fields with case-insensitive substring match:
+
+* Package id (e.g. `com.cysharp.unitask`)
+* Display name
+* Description
+
+For readability the list is capped at **500 results**. Narrow your search to see more.
+
+## Install behavior
+
+Clicking `Install`:
+
+1. Adds (or merges into) the `package.openupm.com` scoped registry
+2. Auto-registers the package scope  
+   e.g. `com.cysharp.unitask` → scope `com.cysharp`
+3. Writes the package + latest version (`dist-tags.latest`) to `dependencies`
+4. Calls `Client.Resolve()`
+
+Results are surfaced as a bottom-right notification.
+
+## Invalid name filter
+
+OpenUPM's `/-/all` is in npm format and can include `@scope/name` style names that are **not valid UPM package names**. The tool filters these out automatically. Without this filter, accidentally installing one would break the manifest and block all package resolution.
+
+## Already installed
+
+Installed packages show an `Installed` badge, and the button label switches to `Reinstall`.

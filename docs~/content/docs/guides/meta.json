@@ -1,0 +1,10 @@
+{
+  "pages": [
+    "featured",
+    "git-url",
+    "installed",
+    "openupm",
+    "troubleshooting"
+  ],
+  "title": "Guides"
+}
