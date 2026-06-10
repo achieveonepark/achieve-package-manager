@@ -1,0 +1,30 @@
+---
+title: Changelog
+description: Changes per Achieve Package Manager version
+---
+
+## 🎉 1.0.0 — 2026.05.24
+
+The first official release, redesigning the package manager with UI Toolkit.
+
+### Added
+
+- **UI Toolkit window** — A single window opened from `Tools > Achieve Package Manager` (toolbar + sidebar + content + status bar).
+- **Installed tab** — Shows all packages in the manifest, auto-detects the source (Registry / Git / Local / Embedded / Built-in), and removes non-built-in entries.
+- **OpenUPM tab** — Downloads the full OpenUPM catalog once into a session cache; search/filter and install with one click (scoped registries merged automatically).
+- **Featured tab** — Shows curated Git packages as category cards with one-click manifest injection.
+- **Custom Git URL tab** — Install by entering an arbitrary Git URL (`https://`, `git@`, `?path=`, `#branch/tag`).
+- **Unresolved entries** — Surfaces resolve failures with a warning banner and Remove button.
+- **UPM name validation** — Validates before writing the manifest to prevent corruption.
+
+### Changed
+
+- Rewrote the IMGUI-based "Manifest Data Viewer" entirely as a UI Toolkit window.
+- Renamed the menu item from `Tools > Manifest Data Viewer` to `Tools > Achieve Package Manager`.
+
+### Fixed
+
+- Fixed loss of top-level fields (e.g. `scopedRegistries`) other than `dependencies` during manifest serialization.
+- Fixed a `CS0246` compile error related to `ToolbarSearchField`.
+- Fixed a layout bug where the toolbar/status bar collapsed.
+- Blocked OpenUPM `@scope/name` style names from breaking manifest resolution.

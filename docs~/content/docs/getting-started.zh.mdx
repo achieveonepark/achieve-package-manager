@@ -1,0 +1,68 @@
+---
+title: 快速开始
+description: 安装 Achieve Package Manager 与窗口的基本用法
+---
+
+## 安装
+
+### 在 Unity Package Manager 中通过 Git URL 添加（推荐）
+
+`Window > Package Manager` → 左上角 **+** → 选择 **Add package from git URL...**，然后输入：
+
+```
+https://github.com/achieveonepark/achieve-package-manager.git
+```
+
+要固定到特定版本，请附加标签。
+
+```
+https://github.com/achieveonepark/achieve-package-manager.git#1.0.0
+```
+
+### 直接添加到 manifest.json
+
+在 `<Project>/Packages/manifest.json` 的 `dependencies` 中添加。
+
+```json
+{
+  "dependencies": {
+    "com.achieve.achieve-package-manager": "https://github.com/achieveonepark/achieve-package-manager.git"
+  }
+}
+```
+
+### 要求
+
+- Unity **2022.3** 及以上
+- `com.unity.nuget.newtonsoft-json`、`com.unity.serialization`（作为依赖自动安装）
+- 网络访问（用于查询 OpenUPM 目录、Git 下载）
+
+## 打开窗口
+
+从 Unity 菜单：
+
+```
+Tools > Achieve Package Manager
+```
+
+## 布局
+
+* **工具栏**：刷新、搜索、打开清单文件位置
+* **侧边栏**：四个类别标签
+* **状态栏**：已安装包数量 / 刷新状态
+
+## 四个标签一览
+
+| 标签 | 用途 |
+|----|------|
+| [Installed](./usage/installed) | 查看/删除当前清单中的包及未解析项 |
+| [OpenUPM](./usage/openupm) | 浏览并从整个 OpenUPM 注册表安装 |
+| [Featured (Git)](./usage/featured) | 一键安装精选 Git 包 |
+| [Custom Git URL](./usage/git-url) | 输入任意 Git URL 进行安装 |
+
+## 搜索与刷新
+
+- 工具栏的**搜索**应用于当前活动标签的列表。
+- `↻ Refresh` 会重新获取 Unity 包列表（`Client.List`）并强制重新下载 OpenUPM 目录。OpenUPM 目录会在会话内自动缓存。
+
+详细用法请参阅 [使用方法](./usage/installed)。

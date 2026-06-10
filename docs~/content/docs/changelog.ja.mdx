@@ -1,0 +1,30 @@
+---
+title: 変更履歴
+description: Achieve Package Manager のバージョンごとの変更履歴
+---
+
+## 🎉 1.0.0 — 2026.05.24
+
+UI Toolkit でパッケージマネージャーを再設計した最初の正式リリース。
+
+### Added
+
+- **UI Toolkit ウィンドウ** — `Tools > Achieve Package Manager` から開く単一ウィンドウ（ツールバー + サイドバー + コンテンツ + ステータスバー）。
+- **Installed タブ** — マニフェストのすべてのパッケージを表示し、ソース（Registry / Git / Local / Embedded / Built-in）を自動検出、ビルトイン以外を削除。
+- **OpenUPM タブ** — OpenUPM 全カタログをセッションキャッシュに 1 回ダウンロード、検索・フィルタ後ワンクリックでインストール（スコープレジストリ自動マージ）。
+- **Featured タブ** — キュレーションされた Git パッケージをカテゴリ別カードで表示、ワンクリックで manifest に注入。
+- **Custom Git URL タブ** — 任意の Git URL（`https://`、`git@`、`?path=`、`#branch/tag`）を入力してワンクリックインストール。
+- **未解決項目の表示** — resolve 失敗を警告バナー + Remove ボタンで表示。
+- **UPM 名の検証** — manifest 書き込み前に検証し、破損を防止。
+
+### Changed
+
+- IMGUI ベースの「Manifest Data Viewer」を UI Toolkit ウィンドウに全面的に書き直し。
+- メニュー項目を `Tools > Manifest Data Viewer` から `Tools > Achieve Package Manager` に変更。
+
+### Fixed
+
+- マニフェストのシリアライズ時に `dependencies` 以外のトップレベルフィールド（`scopedRegistries` など）が失われる問題を修正。
+- `ToolbarSearchField` に関する `CS0246` コンパイルエラーを修正。
+- ツールバー/ステータスバーが潰れるレイアウトバグを修正。
+- OpenUPM の `@scope/name` 形式の名前が manifest の resolve を妨げる問題を防止。

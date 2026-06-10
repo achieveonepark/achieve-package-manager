@@ -1,0 +1,30 @@
+---
+title: 更新日志
+description: Achieve Package Manager 各版本的更新日志
+---
+
+## 🎉 1.0.0 — 2026.05.24
+
+用 UI Toolkit 重新设计包管理器的首个正式版本。
+
+### Added
+
+- **UI Toolkit 窗口** — 从 `Tools > Achieve Package Manager` 打开的单一窗口（工具栏 + 侧边栏 + 内容 + 状态栏）。
+- **Installed 标签** — 显示清单中的所有包，自动检测来源（Registry / Git / Local / Embedded / Built-in），并删除非内置项。
+- **OpenUPM 标签** — 将 OpenUPM 完整目录一次性下载到会话缓存，搜索/筛选后一键安装（自动合并作用域注册表）。
+- **Featured 标签** — 以分类卡片显示精选 Git 包，一键注入 manifest。
+- **Custom Git URL 标签** — 输入任意 Git URL（`https://`、`git@`、`?path=`、`#branch/tag`）一键安装。
+- **未解析项显示** — 用警告横幅 + Remove 按钮展示解析失败项。
+- **UPM 名称校验** — 写入 manifest 前进行校验，防止损坏。
+
+### Changed
+
+- 将基于 IMGUI 的 “Manifest Data Viewer” 全面重写为 UI Toolkit 窗口。
+- 将菜单项从 `Tools > Manifest Data Viewer` 改为 `Tools > Achieve Package Manager`。
+
+### Fixed
+
+- 修复清单序列化时丢失 `dependencies` 以外顶级字段（如 `scopedRegistries`）的问题。
+- 修复与 `ToolbarSearchField` 相关的 `CS0246` 编译错误。
+- 修复工具栏/状态栏被压扁的布局问题。
+- 阻止 OpenUPM `@scope/name` 形式名称破坏 manifest 解析。

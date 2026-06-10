@@ -1,0 +1,30 @@
+---
+title: 변경 내역
+description: Achieve Package Manager 버전별 변경 내역
+---
+
+## 🎉 1.0.0 — 2026.05.24
+
+UI Toolkit으로 패키지 매니저를 새로 설계한 첫 정식 릴리스.
+
+### Added
+
+- **UI Toolkit 윈도우** — `Tools > Achieve Package Manager`에서 열리는 단일 윈도우 (툴바 + 사이드바 + 컨텐츠 + 상태바).
+- **Installed 탭** — 매니페스트의 모든 패키지 표시, 소스(Registry / Git / Local / Embedded / Built-in) 자동 감지, 빌트인이 아닌 항목 제거.
+- **OpenUPM 탭** — OpenUPM 전체 카탈로그를 세션 캐시로 1회 다운로드, 검색·필터링 후 1클릭 설치 (스코프 레지스트리 자동 병합).
+- **Featured 탭** — 큐레이션된 Git 패키지를 카테고리별 카드로 표시, 1클릭 manifest 주입.
+- **Custom Git URL 탭** — 임의 Git URL(`https://`, `git@`, `?path=`, `#branch/tag`) 입력 후 1클릭 설치.
+- **미해결 항목 표시** — resolve 실패 항목을 경고 배너 + Remove 버튼으로 노출.
+- **UPM 이름 검증** — manifest 쓰기 전 유효성 검증으로 매니페스트 손상 방지.
+
+### Changed
+
+- 기존 IMGUI 기반 "Manifest Data Viewer"를 UI Toolkit 윈도우로 전면 재작성.
+- 메뉴 항목을 `Tools > Manifest Data Viewer` → `Tools > Achieve Package Manager`로 변경.
+
+### Fixed
+
+- 매니페스트 직렬화 시 `dependencies` 외 최상위 필드(`scopedRegistries` 등)가 손실되던 문제 수정.
+- `ToolbarSearchField` 관련 `CS0246` 컴파일 에러 수정.
+- 툴바/상태바가 찌부러지던 레이아웃 버그 수정.
+- OpenUPM `@scope/name` 형식 이름이 매니페스트 resolve를 막던 문제 차단.
